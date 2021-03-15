@@ -151,7 +151,11 @@ class ImageQualityClassifier:
 classifier = ImageQualityClassifier()
 #to make predictions for new data, load the model then run
 classifier.loadModel('iqcModel.pickle')
-classifier.run("datasets/new/", "filenames.csv", 256)
+# run expects 3 arguments,
+#   the root folder (with trailing slash),
+#   a csv listing all the image file names,
+#   and the number of components
+classifier.run("datasets/new/", "filenames.csv", 128)
 
 # classifier.run_and_train("datasets/", "labels.csv", 256)
 # classifier.saveModel('iqcModel.pickle')
