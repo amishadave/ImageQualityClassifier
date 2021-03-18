@@ -24,7 +24,7 @@ from sklearn.svm import SVC
 class ImageQualityClassifier:
 
     def __init__(self):
-        self.model = SVC(kernel='rbf', probability = True)
+        self.model = SVC(kernel='rbf', class_weight = 'balanced', probability = True)
 
     def loadModel(self, filename):
         with open(filename, 'rb') as file:
@@ -66,7 +66,12 @@ class ImageQualityClassifier:
         ss = StandardScaler()
         quality_stand = ss.fit_transform(feature_matrix)
         pca = PCA(n_components = component_num)
-        quality_pca = ss.fit_transform(quality_stand)
+        quality_pca = pca.fit_transform(quality_stand)
+        var1 = np.cumsum(np.round(pca.explained_variance_ratio_, decimals=4)*100)
+        print(pca.components_)
+        print(pca.explained_variance_ratio_)
+        plt.plot(var1)
+
         return quality_pca
 
     def test_train(self, pca_data, data_labels):
@@ -150,13 +155,13 @@ class ImageQualityClassifier:
 
 classifier = ImageQualityClassifier()
 #to make predictions for new data, load the model then run
-classifier.loadModel('iqcModel.pickle')
-# run expects 3 arguments,
-#   the root folder (with trailing slash),
-#   a csv listing all the image file names,
-#   and the number of components
-classifier.run("datasets/new/", "filenames.csv", 128)
+# classifier.loadModel('iqcModel.pickle')
+# # run expects 3 arguments,
+# #   the root folder (with trailing slash),
+# #   a csv listing all the image file names,
+# #   and the number of components
+# classifier.run("datasets/new/", "filenames.csv", 128)
 
-# classifier.run_and_train("datasets/", "labels.csv", 256)
-# classifier.saveModel('iqcModel.pickle')
+classifier.run_and_train("datasets/", "labels.csv", 125)
+classifier.saveModel('iqcModel.pickle')
 
