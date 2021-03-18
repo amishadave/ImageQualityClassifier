@@ -160,7 +160,7 @@ classifier = ImageQualityClassifier()
 # #   the root folder (with trailing slash),
 # #   a csv listing all the image file names,
 # #   and the number of components
-# classifier.run("datasets/new/", "filenames.csv", 128)
+# classifier.run("datasets/new/", "filenames.csv", 125)
 
 classifier.run_and_train("datasets/", "labels.csv", 125)
 classifier.saveModel('iqcModel.pickle')
