@@ -23,30 +23,35 @@ from sklearn.svm import SVC
 
 class ImageQualityClassifier:
 
+    #creates the model instance to be used throughout
     def __init__(self):
         self.model = SVC(kernel='rbf', class_weight = 'balanced', probability = True)
 
+    #loads a previously saved model
     def loadModel(self, filename):
         with open(filename, 'rb') as file:
             self.model = pickle.load(file)
 
+    #saves a model
     def saveModel(self, filename):
         with open(filename, 'wb') as file:
             pickle.dump(self.model, file)
 
+    #retrieves image using finenames list (excel doc) from folder
     def get_image(self, row, root = "datasets/"):
         filename = "{}".format(row)
         file_path = os.path.join(root, filename)
         img = Image.open(file_path)
         return np.array(img)
 
+    #creates image features after converting to gray scale and flattening
     def create_features(self, img):
-        color_features = img.flatten()
         gray_image = rgb2gray(img)
-        hog_features = hog(gray_image, block_norm='L2-Hys', pixels_per_cell=(16,16))
-        flat_features = np.hstack(color_features)
+        gray_features = gray_image.flatten()
+        flat_features = np.hstack(gray_features)
         return flat_features
 
+    #retrieves features for each image and compiles into a matrix
     def create_feature_matrix(self, label_dataframe, root):
         features_list = []
         
@@ -61,48 +66,54 @@ class ImageQualityClassifier:
         feature_matrix = np.array(features_list)
         return feature_matrix
 
-
+    #reduces the dimensionality of data by implementing a PCA after standardizing data
     def run_PCA(self, feature_matrix, component_num):
         ss = StandardScaler()
         quality_stand = ss.fit_transform(feature_matrix)
         pca = PCA(n_components = component_num)
         quality_pca = pca.fit_transform(quality_stand)
-        var1 = np.cumsum(np.round(pca.explained_variance_ratio_, decimals=4)*100)
-        print(pca.components_)
-        print(pca.explained_variance_ratio_)
-        plt.plot(var1)
+        #can use code below to determine how many components explain variance
+        # var1 = np.cumsum(np.round(pca.explained_variance_ratio_, decimals=4)*100)
+        # print(pca.components_)
+        # print(pca.explained_variance_ratio_)
+        # plt.plot(var1)
 
         return quality_pca
-
+    
+    #stratified k fold SVM training and testing
     def test_train(self, pca_data, data_labels):
+        #organizes data into image features (X) and quality classification (y)
         X = pd.DataFrame(pca_data)
         y = pd.Series(data_labels.values)
 
         skf = StratifiedKFold(n_splits = 5)
 
+        #sets up arrays that for loop will fill
         all_feature_importances = np.zeros((len(set(y)), len(X.columns)))
         all_labels = []
         all_predictions = []
         accuracy = 0
 
+        #training and testing
         for train_index, test_index in skf.split(X.values, y):
             X_train, y_train = X.values[train_index], y[train_index]
             X_test, y_test = X.values[test_index], y[test_index]
             self.model.fit(X_train, y_train)
 
-            # all_feature_importances += model.coef_
+            # compiles model predictions, true label, and accuracy
             predictions = self.model.predict(X_test)
             all_predictions.extend(predictions)
             all_labels.extend(y_test)
             accuracy += accuracy_score(predictions, y_test)
 
+        #gets probabilities from model for test data
         probabilities = self.model.predict_proba(X_test)
         return accuracy/5, all_labels, all_predictions, probabilities, y_test
 
+    #runs a model on new data
     def user_run_data(self, pca_data):
         X = pd.DataFrame(pca_data)
 
-        # all_feature_importances = np.zeros((len(set(y)), len(X.columns)))
         all_predictions = []
 
         predictions = self.model.predict(X.values)
@@ -110,12 +121,14 @@ class ImageQualityClassifier:
 
         return all_predictions
 
-
+    #creates confusion matrix
     def get_confusion_matrix(self, all_labels, all_predictions):
         cm = confusion_matrix(all_labels, all_predictions, normalize='true')
         df_cm = pd.DataFrame(cm, index=[0,1], columns=[0,1])
         return sns.heatmap(df_cm, annot=True)
 
+
+    #plots receiveer operating characteristic curve and area under the curve value
     def plot_AUC(self, y_test, probabilities):
         y_proba = probabilities[:, 1]
 
@@ -129,6 +142,7 @@ class ImageQualityClassifier:
         plt.ylabel("True Positive Rate")
         plt.xlabel("False Positive Rate")
 
+    #run function to create a model
     def run_and_train(self, root, csv_path, component_num):
         labels = pd.read_csv(root+csv_path, index_col=0)
         # run create_feature_matrix on our dataframe of images
@@ -144,6 +158,7 @@ class ImageQualityClassifier:
         print("Predicted values: {}".format(all_predictions))
         plt.show()
 
+    #run function for saved model and new data
     def run(self, root, csv_path, component_num):
         labels = pd.read_csv(root+csv_path, index_col=0)
         # run create_feature_matrix on our dataframe of images
