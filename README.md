@@ -12,7 +12,7 @@ The dataset is specified at the end of `script.py`. The dataset can be easily sw
 
 Ensure lines 173 and 178 are commented out and lines 180 and 181 are uncommented. Images should be in a folder called "datasets" with an excel sheet that has a list of the file names with their annotated classification (good=0, poor=1). The script should be in the same folder as "datasets".
 
-## Load a saved model with New Data
+## Load a Saved Model with New Data
 Ensure lines 180 and 181 are commented out and lines 173 and 178 are uncommented. New images to be analyzed should be in a folder called "new" within the "datasets" folder. The "new" folder should have an excel sheet with a list of file names. The script should be in the same folder as "datasets".
 
 ## Dependencies
