@@ -4,7 +4,7 @@ This classifier identifies whether an adaptive optics image is of good (0) or po
 
 ## Getting Started
 
-You can run the project using `python3 script.py`
+Run the script (`script.py`) with no arguments.
 
 The dataset is specified at the end of `script.py`. The dataset can be easily swapped to a new dataset by changing the paths and associated parameters.
 
