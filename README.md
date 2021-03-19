@@ -25,4 +25,10 @@ https://scikit-learn.org/0.15/modules/generated/sklearn.svm.libsvm.predict_proba
 
 https://stackoverflow.com/questions/15564410/scikit-learn-svm-how-to-save-load-support-vectors
 
+https://elitedatascience.com/imbalanced-classes
+
+https://towardsdatascience.com/an-implementation-and-explanation-of-the-random-forest-in-python-77bf308a9b76
+
+https://github.com/WillKoehrsen/Machine-Learning-Projects/blob/master/Random%20Forest%20Tutorial.ipynb
+
 Tutorial Code from my Applied Machine Learning FAES class
