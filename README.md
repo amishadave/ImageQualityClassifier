@@ -8,7 +8,12 @@ You can run the project using `python3 script.py`
 
 The dataset is specified at the end of `script.py`. The dataset can be easily swapped to a new dataset by changing the paths and associated parameters.
 
-The model is also specified at the end of `script.py`. The model can also easily be swapped to a different model. You can use the code with your own data to generate your own model by uncommenting the last 2 lines of the code (lines 156, 157) and commenting out lines 153 and 154. A  model you may already have or one you just generated using the code have be loaded at the end of the script (line 153).
+## Create a Model Based on Annotated Data
+
+Ensure lines 173 and 178 are commented out and lines 180 and 181 are uncommented. Images should be in a folder called "datasets" with an excel sheet that has a list of the file names with their annotated classification (good=0, poor=1). The script should be in the same folder as "datasets".
+
+## Load a saved model with New Data
+Ensure lines 180 and 181 are commented out and lines 173 and 178 are uncommented. New images to be analyzed should be in a folder called "new" within the "datasets" folder. The "new" folder should have an excel sheet with a list of file names. The script should be in the same folder as "datasets".
 
 ## Dependencies
 This project is dependent on scikit-learn, scikit-image, matplotlib, seaborn, pandas, numpy, and opencv.
